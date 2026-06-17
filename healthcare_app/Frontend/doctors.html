@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% from "macros.html" import sidebar %}
+{% block title %}Find Doctors — MediCare{% endblock %}
+{% block body %}
+{{ sidebar(current_user, 'doctors') }}
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <div class="page-title">Find Doctors</div>
+            <div class="page-subtitle">Choose a specialist and book your appointment.</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="doctors-grid">
+            {% for doctor in doctors %}
+            <div class="doctor-card">
+                <div class="doctor-card-top">
+                    <div class="doctor-avatar">{{ doctor.name.split()[1][0] }}</div>
+                    <div>
+                        <div class="doctor-card-name">{{ doctor.name }}</div>
+                        <div class="doctor-card-spec">{{ doctor.specialization }}</div>
+                    </div>
+                </div>
+                <div class="doctor-card-body">
+                    <div class="doctor-detail">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                        {{ doctor.experience }} experience
+                    </div>
+                    <div class="doctor-detail">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        {{ doctor.available_days }}
+                    </div>
+                    <div class="doctor-fee">{{ doctor.fee }} <span>/ consultation</span></div>
+                    <a href="/book/{{ doctor.id }}" class="btn btn-primary" style="width:100%;justify-content:center">
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Book Appointment
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
