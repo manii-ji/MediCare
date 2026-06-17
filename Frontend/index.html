@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% from "macros.html" import sidebar %}
+{% block title %}Dashboard — MediCare{% endblock %}
+{% block body %}
+{{ sidebar(current_user, 'dashboard') }}
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <div class="page-title">Dashboard</div>
+            <div class="page-subtitle">Good day, {{ current_user.name }}. Here's your health overview.</div>
+        </div>
+        <a href="/doctors" class="btn btn-primary">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Book Appointment
+        </a>
+    </div>
+
+    <div class="content">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon teal-bg">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ total }}</div>
+                    <div class="stat-label">Total Appointments</div>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-icon green-bg">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ confirmed }}</div>
+                    <div class="stat-label">Confirmed</div>
+                </div>
+            </div>
+            <div class="stat-card amber">
+                <div class="stat-icon amber-bg">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ pending }}</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+            </div>
+            <div class="stat-card coral">
+                <div class="stat-icon coral-bg">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                </div>
+                <div>
+                    <div class="stat-value">{{ cancelled }}</div>
+                    <div class="stat-label">Cancelled</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">My Appointments</div>
+                <a href="/doctors" class="btn btn-primary btn-sm">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                    New
+                </a>
+            </div>
+
+            {% if appointments %}
+            <table class="appt-table">
+                <thead>
+                    <tr>
+                        <th>Doctor</th>
+                        <th>Date & Time</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in appointments | reverse %}
+                    <tr>
+                        <td>
+                            <div class="doctor-cell">
+                                <span class="doctor-name">{{ appt.doctor_name }}</span>
+                                <span class="doctor-spec">{{ appt.specialization }}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;font-size:14px">{{ appt.date }}</div>
+                            <div style="font-size:12px;color:#64748B;margin-top:2px">{{ appt.time }}</div>
+                        </td>
+                        <td style="color:#64748B;font-size:13px;max-width:200px">{{ appt.reason }}</td>
+                        <td>
+                            {% if appt.status == 'Confirmed' %}
+                                <span class="badge badge-confirmed">Confirmed</span>
+                            {% elif appt.status == 'Cancelled' %}
+                                <span class="badge badge-cancelled">Cancelled</span>
+                            {% else %}
+                                <span class="badge badge-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if appt.status != 'Cancelled' %}
+                            <a href="/cancel/{{ appt.id }}" class="btn btn-danger btn-sm"
+                               onclick="return confirm('Cancel this appointment?')">Cancel</a>
+                            {% else %}
+                            <span style="font-size:13px;color:#94A3B8">—</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty-state">
+                <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <h3>No appointments yet</h3>
+                <p>Browse our doctors and book your first appointment.</p>
+                <a href="/doctors" class="btn btn-primary">Find a Doctor</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

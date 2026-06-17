@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% from "macros.html" import sidebar %}
+{% block title %}Book Appointment — MediCare{% endblock %}
+{% block extra_styles %}
+<style>
+.booking-layout { display: grid; grid-template-columns: 1fr 360px; gap: 24px; }
+
+.doctor-summary {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    height: fit-content;
+}
+
+.doc-sum-top { padding: 32px 28px; }
+
+.doc-sum-avatar {
+    width: 72px;
+    height: 72px;
+    background: var(--teal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 16px;
+    border: 4px solid rgba(255,255,255,0.15);
+}
+
+.doc-sum-name { font-size: 20px; font-weight: 700; color: var(--white); }
+.doc-sum-spec { font-size: 13px; color: var(--teal); font-weight: 600; margin-top: 4px; }
+
+.doc-sum-divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 0 28px; }
+
+.doc-sum-details { padding: 20px 28px; }
+
+.doc-sum-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+}
+
+.doc-sum-row svg { width: 16px; height: 16px; color: var(--teal); flex-shrink: 0; }
+.doc-sum-label { color: rgba(255,255,255,0.4); font-size: 11px; margin-bottom: 2px; }
+.doc-sum-value { color: rgba(255,255,255,0.85); }
+
+.doc-sum-fee { padding: 20px 28px; background: rgba(14,165,160,0.15); }
+.doc-sum-fee-amount { font-size: 28px; font-weight: 800; color: var(--white); }
+.doc-sum-fee-label { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.time-option {
+    display: none;
+}
+
+.time-label {
+    display: block;
+    text-align: center;
+    padding: 10px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.time-option:checked + .time-label {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: var(--white);
+    font-weight: 600;
+}
+
+.time-label:hover { border-color: var(--teal); color: var(--teal); }
+</style>
+{% endblock %}
+{% block body %}
+{{ sidebar(current_user, 'doctors') }}
+
+<div class="main">
+    <div class="topbar">
+        <div>
+            <div class="page-title">Book Appointment</div>
+            <div class="page-subtitle">Fill in the details to schedule your visit.</div>
+        </div>
+        <a href="/doctors" class="btn" style="background:var(--slate);color:var(--text-secondary)">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="width:16px;height:16px"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            Back
+        </a>
+    </div>
+
+    <div class="content">
+        <div class="booking-layout">
+            <!-- Form -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Appointment Details</div>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="/book/{{ doctor.id }}">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label class="form-label">Appointment Date</label>
+                                <input type="date" name="date" class="form-input" required
+                                       min="{{ '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preferred Time</label>
+                                <select name="time" class="form-select" required>
+                                    <option value="">Select a time slot</option>
+                                    <optgroup label="Morning">
+                                        <option value="09:00 AM">09:00 AM</option>
+                                        <option value="09:30 AM">09:30 AM</option>
+                                        <option value="10:00 AM">10:00 AM</option>
+                                        <option value="10:30 AM">10:30 AM</option>
+                                        <option value="11:00 AM">11:00 AM</option>
+                                        <option value="11:30 AM">11:30 AM</option>
+                                    </optgroup>
+                                    <optgroup label="Afternoon">
+                                        <option value="01:00 PM">01:00 PM</option>
+                                        <option value="01:30 PM">01:30 PM</option>
+                                        <option value="02:00 PM">02:00 PM</option>
+                                        <option value="02:30 PM">02:30 PM</option>
+                                        <option value="03:00 PM">03:00 PM</option>
+                                        <option value="03:30 PM">03:30 PM</option>
+                                    </optgroup>
+                                    <optgroup label="Evening">
+                                        <option value="05:00 PM">05:00 PM</option>
+                                        <option value="05:30 PM">05:30 PM</option>
+                                        <option value="06:00 PM">06:00 PM</option>
+                                    </optgroup>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Reason for Visit</label>
+                            <textarea name="reason" class="form-textarea"
+                                      placeholder="Describe your symptoms or reason for consultation..." required></textarea>
+                        </div>
+
+                        <div style="background:var(--slate);border-radius:10px;padding:16px;margin-bottom:24px;font-size:13px;color:var(--text-secondary)">
+                            <strong style="color:var(--text-primary)">Available days:</strong> {{ doctor.available_days }}
+                        </div>
+
+                        <button type="submit" class="form-submit">
+                            Confirm Booking — {{ doctor.fee }}
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Doctor Summary -->
+            <div>
+                <div class="doctor-summary">
+                    <div class="doc-sum-top">
+                        <div class="doc-sum-avatar">{{ doctor.name.split()[1][0] }}</div>
+                        <div class="doc-sum-name">{{ doctor.name }}</div>
+                        <div class="doc-sum-spec">{{ doctor.specialization }}</div>
+                    </div>
+                    <hr class="doc-sum-divider">
+                    <div class="doc-sum-details">
+                        <div style="margin-bottom:16px">
+                            <div class="doc-sum-label">Experience</div>
+                            <div class="doc-sum-value">{{ doctor.experience }}</div>
+                        </div>
+                        <div style="margin-bottom:16px">
+                            <div class="doc-sum-label">Available Days</div>
+                            <div class="doc-sum-value">{{ doctor.available_days }}</div>
+                        </div>
+                        <div>
+                            <div class="doc-sum-label">Specialization</div>
+                            <div class="doc-sum-value">{{ doctor.specialization }}</div>
+                        </div>
+                    </div>
+                    <div class="doc-sum-fee">
+                        <div class="doc-sum-fee-amount">{{ doctor.fee }}</div>
+                        <div class="doc-sum-fee-label">Consultation fee</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
