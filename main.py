@@ -239,7 +239,7 @@ def cancel_appointment(appointment_id: int, current_user: User = Depends(get_cur
     if not current_user:
         return RedirectResponse(url="/login", status_code=303)
     appt = db.get(Appointment, appointment_id)
-    if appt and appt.patient_id == current_user.id and appt.status == "Pending":
+    if appt and appt.patient_id == current_user.id and appt.status in ("Pending", "Confirmed"):
         appt.status = "Cancelled"
         db.commit()
     return RedirectResponse(url="/", status_code=303)
