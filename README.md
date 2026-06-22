@@ -1,6 +1,6 @@
 # MediCare — Healthcare Appointment System
 
-A full-stack healthcare appointment booking web app built with FastAPI, SQLite, JWT auth, and Jinja2 templates.
+A full-stack healthcare appointment booking web app built with Python, FastAPI, SQLite, JWT auth, and Jinja2 templates.
 
 ## Features
 - JWT-based authentication (signup / login / logout)
@@ -57,3 +57,5 @@ http://localhost:8000
 - **Auth:** JWT (PyJWT) + bcrypt password hashing
 - **Templates:** Jinja2
 - **Styling:** Pure CSS (Inter font, no frameworks)
+
+
